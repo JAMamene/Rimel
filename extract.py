@@ -1,6 +1,5 @@
 import urllib.request
 import json
-
 import re
 import requests
 
@@ -12,24 +11,39 @@ def get_token():
         return str
 
 HEADER = {'Authorization': 'token ' + get_token()}
-CSV_PATH = './result.csv'
+JSON_PATH = 'data.json'
 LANGUAGE = 'java'
 MIN_SIZE_KB = '1000'
-MIN_COMMITS = 100
+MIN_COMMITS = 120
+NB_REPO = 6
 
 
-def get_repos():
-    url = 'https://api.github.com/search/repositories?q=language:' + LANGUAGE + '&size>' + MIN_SIZE_KB + '&is:public'
+def get_repos(page_nb):
+    url = 'https://api.github.com/search/repositories?q=language:' + LANGUAGE + '&size>' + MIN_SIZE_KB + '&is:public&page=' + str(page_nb)
     return requests.get(url, headers=HEADER).json()['items']
 
-def get_nb_commit(url, page):
-    nb = len(requests.get(url, headers=HEADER).json())
+def has_enough_commits(url):
+    return len(requests.get(url, headers=HEADER).json()) != 0
 
 
 if __name__ == "__main__":
-    get_repos()
     repo_list = []
-    for repo in get_repos():
-        if get_nb_commit(repo['commits_url'][:-6], 0) > MIN_COMMITS:
-            repo_list.append(repo['full_name'])
-    print(repo_list)
+    i = 10
+    print(' ' * NB_REPO + ' |')
+    finished = False
+    while True:
+        if (finished):
+            break
+        for repo in get_repos(i):
+            if has_enough_commits(repo['commits_url'][:-6] + '?page=' + str(MIN_COMMITS//30)):
+                repo_details = {}
+                repo_details['name'] = repo['full_name']
+                repo_details['clone'] = repo['clone_url']
+                repo_list.append(repo_details)
+                print('.',flush=True, end='')
+                if (len(repo_list) > NB_REPO):
+                    finished = True
+                    break
+        i+=1
+    with open(JSON_PATH, 'w') as fp:
+        json.dump(repo_list, fp)
