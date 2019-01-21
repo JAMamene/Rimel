@@ -7,7 +7,7 @@ import os
 from cd import cd
 
 def get_token():
-    with open('token', 'r') as file:
+    with open('../token', 'r') as file:
         str = file.read().replace('\n', '')
         if str == '':
             print('NO TOKEN PROVIDED, NEED TO PROVIDE A TOKEN FILE WITH TOKEN LUL')
