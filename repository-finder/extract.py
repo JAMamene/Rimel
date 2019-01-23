@@ -6,7 +6,7 @@ import requests
 def get_token():
     with open('../token', 'r') as file:
         str = file.read().replace('\n', '')
-        if str == '':
+        if str == '' or str is None:
             print('NO TOKEN PROVIDED, NEED TO PROVIDE A TOKEN FILE WITH TOKEN LUL')
         return str
 
@@ -22,11 +22,10 @@ def get_repos():
     return requests.get(url, headers=HEADER).json()['items']
 
 def get_nb_commit(url, page):
-    nb = len(requests.get(url, headers=HEADER).json())
+    return len(requests.get(url, headers=HEADER).json())
 
 
 if __name__ == "__main__":
-    get_repos()
     repo_list = []
     for repo in get_repos():
         if get_nb_commit(repo['commits_url'][:-6], 0) > MIN_COMMITS:

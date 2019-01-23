@@ -91,7 +91,7 @@ def write_merges(merges):
     with open('./merges.csv', 'w') as f:
         f.write('url,left,right,result,base\n')
         f.flush()
-        print("%d merge(s) founded"  % len(merges))
+        print("%d merge(s) found"  % len(merges))
         for merge in merges:
             f.write('%s,%s,%s,%s,%s\n' % (merge['url'], merge['left'], merge['right'], merge['result'], merge['base']))
             f.flush()
