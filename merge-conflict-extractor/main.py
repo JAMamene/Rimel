@@ -1,8 +1,8 @@
+import json
+import subprocess
+
 from argparser import parse_args
 from cd import cd
-
-import subprocess
-import json
 
 
 def git_reset_hard():
@@ -26,6 +26,7 @@ def extract_conflict_files(merge_result, project_conflict):
                 project_conflict[file_name] = 0
             project_conflict[file_name] += 1
     return project_conflict
+
 
 def extract_merge_conflict(repository_path, left_commit, right_commit, project_conflict):
     with cd(repository_path):
@@ -56,8 +57,9 @@ def extract_merges_conflict(repositories_path, merge_csv_path):
         projects_conflicts[url] = extract_merge_conflict(repository_path, left_sha, right_sha, projects_conflicts[url])
     return json.dumps(projects_conflicts, indent=2)
 
+
 def write_result(json_result):
-    with open('./merges-conflicts.json', 'w') as file:
+    with open('../merges-conflicts.json', 'w') as file:
         file.write(json_result)
 
 
