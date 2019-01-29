@@ -50,7 +50,7 @@ def get_base_commit(repo_name, repo_url, left_commit, right_commit):
         git_clone(repo_url)
     with cd(REPOSITORIES_DIRECTORY + '/%s' % repo_name):
         result = subprocess.run(["git", "merge-base", left_commit, right_commit], stdout=subprocess.PIPE)
-        return result.stdout
+        return str(result.stdout.decode()[:-1])
 
 
 def extract_merge_information(commit, repo_url, repo_name):
@@ -60,7 +60,8 @@ def extract_merge_information(commit, repo_url, repo_name):
         'left': left_parent['sha'],
         'right': right_parent['sha'],
         'result': commit['sha'],
-        'base': get_base_commit(repo_name, repo_url, left_parent['sha'], right_parent['sha'])
+        'base': get_base_commit(repo_name, repo_url, left_parent['sha'], right_parent['sha']),
+        'result_committer_date': commit['commit']['committer']['date']
     }
 
 
@@ -90,11 +91,11 @@ def get_repositories_merges():
 
 def write_merges(merges):
     with open('%s' % CSV_PATH, 'w') as f:
-        f.write('url,left,right,result,base\n')
+        f.write('url,left,right,result,base,result_committer_date\n')
         f.flush()
         print("%d merge(s) found" % len(merges))
         for merge in merges:
-            f.write('%s,%s,%s,%s,%s\n' % (merge['url'], merge['left'], merge['right'], merge['result'], merge['base']))
+            f.write('%s,%s,%s,%s,%s,%s\n' % (merge['url'], merge['left'], merge['right'], merge['result'], merge['base'], merge['result_committer_date']))
             f.flush()
 
 
