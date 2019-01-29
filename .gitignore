@@ -2,4 +2,5 @@ token
 
 # generated directory / files by merge-extractor 
 repositories/
+graphs
 merges.csv
