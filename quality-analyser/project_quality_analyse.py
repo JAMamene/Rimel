@@ -1,12 +1,11 @@
 import argparse
 import json
+import os
 import subprocess
 import urllib.request
 from pprint import pprint
 
-METRICS = ["blocker_violations", "bugs", "code_smells", "cognitive_complexity", "comment_lines", "class_complexity",
-           "function_complexity", "confirmed_issues", "critical_violations", "complexity",
-           "duplicated_blocks", "info_violations", "violations", "lines", "major_violations", "minor_violations"]
+import data
 
 
 def parse_args():
@@ -44,18 +43,19 @@ def run_command(command: str) -> str:
 
 
 def build_sonar_request(project):
-    return 'http://localhost:9000/api/measures/component?component={}&metricKeys={}'.format(project, ",".join(METRICS))
+    return 'http://localhost:9000/api/measures/component?component={}&metricKeys={}'.format(project,
+                                                                                            ",".join(data.METRICS))
 
 
 def exec_request(request):
     return json.loads(urllib.request.urlopen(request).read().decode())
 
 
-def format_to_csv_line(data):
+def format_to_csv_line(data_dict):
     # print(data['component'])
-    row: str = data['component']['key']
-    for metric in METRICS:
-        for measure in data['component']['measures']:
+    row: str = data_dict['component']['key']
+    for metric in data.METRICS:
+        for measure in data_dict['component']['measures']:
             if metric == measure['metric']:
                 row += "," + measure['value']
     return row
@@ -67,12 +67,14 @@ if __name__ == '__main__':
         args.binaries = "./target"
     if not args.src:
         args.src = "."
+    if not os.path.isdir(args.binaries):
+        os.mkdir(args.binaries)
     run_command(
         build_scanner_command(
             args.sonar_scanner_path,
             args.project_key,
             args.src,
             args.binaries))
-    res = exec_request(build_sonar_request("test"))
+    res = exec_request(build_sonar_request(args.project_key))
     pprint(res)
     print(format_to_csv_line(res))
