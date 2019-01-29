@@ -25,5 +25,5 @@ Before running this script you need to run sonar-scanner on the project to analy
 
 **How to use** :
 ```bash
- $ python3 extract_file_data.py <input_file_path>
+ $ python3 analyse_file_quality.py <input_file_path>
 ```
