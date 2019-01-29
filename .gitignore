@@ -1,8 +1,5 @@
 token
 
-__pycache__/
-
 # generated directory / files by merge-extractor 
 repositories/
-repositories.csv
 merges.csv

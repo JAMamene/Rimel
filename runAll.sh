@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 cd repository-finder
-python extract.py
+python extract.py 10 1000 16000
 
 cd ../merge-extractor/
 python main.py
