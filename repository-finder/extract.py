@@ -50,7 +50,7 @@ if __name__ == "__main__":
                 repo_list.append(repo_details)
                 sys.stdout.write("-")
                 sys.stdout.flush()
-                if len(repo_list) > args.nb_repo - 1:
+                if len(repo_list) > args.nb_repo - 1 or i > 1000:
                     finished = True
                     break
         i += 1
