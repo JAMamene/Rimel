@@ -84,7 +84,7 @@ def get_repositories_merges():
             repo_name = repo_info['name'].split('/')[1]
             branches = get_repositories_branch(owner, repo_name)
             for branch in branches:
-                commits = get_all_commit(owner, repo_name, branch['name'])
+                commits = get_all_commit(owner, repo_name, branch['commit']['sha'])
                 merges = merges + get_merges(commits, repo_info['clone'], repo_name)
     return merges
 

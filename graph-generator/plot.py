@@ -24,10 +24,6 @@ def get_filename(item):
     return item.split("/")[len(item.split("/")) - 1]
 
 
-def get_project_name(s):
-    return s.split("/")[len(s.split("/")) - 1].replace(".git", "")
-
-
 def generate_all_graphs(project_name, project_json):
     x_merge_values = []
     y_quality_metrics = dict()
@@ -36,13 +32,21 @@ def generate_all_graphs(project_name, project_json):
         y_quality_metrics[metric] = []
 
     for file_json in project_json:
+        if file_json["quality"] == {}:
+            print("Found no data, skipping file " + get_filename(file_json["file"]) + " in project " + project_name)
+            continue
         x_merge_values.append(file_json["merges"])
+        lines = 1
+        for metric_json in file_json["quality"]["component"]["measures"]:
+            if metric_json["metric"] is "lines":
+                lines = float(metric_json["value"])
+                break
         for metric_json in file_json["quality"]["component"]["measures"]:
             if metric_json["metric"] is "lines":
                 y_quality_metrics[metric_json["metric"]].append(float(metric_json["value"]))
             else:
                 y_quality_metrics[metric_json["metric"]].append(
-                    float(metric_json["value"]) / float(metric_json["lines"]))
+                    float(metric_json["value"]) / lines)
 
     if len(x_merge_values) <= 1:
         print("--> One or Zero points to plot for " + project_name + ", no graphs will be generated!")
@@ -56,6 +60,9 @@ def generate_all_graphs(project_name, project_json):
 
 
 def generate_graph(x, y, project_name, metric_name):
+    if (len(x) != len(y)):
+        print("Cannot plot " + metric_name + " of project " + project_name + " : mismatch between merges and metric data")
+        return
     trace = go.Scatter(x=x, y=y, mode='markers')
     slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
     line = []
@@ -76,12 +83,13 @@ def main(argv):
     if len(argv) < 2:
         print("Pass the json output of the SonarQube script as arg (../quality-analyser)")
         return
+    json_path = argv[1]
 
     create_folder(graphs_folder)
     with(open(json_path)) as file:
         json_object = json.load(file)
         for project in json_object:
-            generate_all_graphs(get_project_name(project), json_object[project])
+            generate_all_graphs(project, json_object[project])
 
 
 if __name__ == "__main__":
