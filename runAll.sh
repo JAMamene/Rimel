@@ -29,5 +29,8 @@ done
 cd ../quality-analyser/
 python3 analyse_file_quality.py ../merges-conflicts.json ../quality-report.json
 
+cd ../graph-generator/
+python3 plot.py ../quality-report.json
+
 
 
