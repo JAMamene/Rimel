@@ -38,7 +38,11 @@ def generate_all_graphs(project_name, project_json):
     for file_json in project_json:
         x_merge_values.append(file_json["merges"])
         for metric_json in file_json["quality"]["component"]["measures"]:
-            y_quality_metrics[metric_json["metric"]].append(float(metric_json["value"]))
+            if metric_json["metric"] is "lines":
+                y_quality_metrics[metric_json["metric"]].append(float(metric_json["value"]))
+            else:
+                y_quality_metrics[metric_json["metric"]].append(
+                    float(metric_json["value"]) / float(metric_json["lines"]))
 
     if len(x_merge_values) <= 1:
         print("--> One or Zero points to plot for " + project_name + ", no graphs will be generated!")
