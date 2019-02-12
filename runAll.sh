@@ -7,13 +7,13 @@ fi
 echo "WARNING : sonarQube server must be running !"
 
 cd repository-finder
-python3 extract.py 10 1000 16000
+python extract.py 50 1000 100000
 
 cd ../merge-extractor/
-python3 main.py
+python main.py
 
 cd ../merge-conflict-extractor/
-python3 main.py ../repositories/ ../merges.csv
+python main.py ../repositories/ ../merges.csv
 
 cd ../repositories/
 for d in */ ; do
@@ -28,6 +28,9 @@ done
 
 cd ../quality-analyser/
 python3 analyse_file_quality.py ../merges-conflicts.json ../quality-report.json
+
+cd ../graph-generator/
+python3 plot.py ../quality-report.json
 
 
 

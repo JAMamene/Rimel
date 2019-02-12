@@ -10,6 +10,9 @@ def parse_args():
     parser.add_argument('min_commits'
                         , type=int
                         , help='The minimum number of commits to have.\n')
+    parser.add_argument('min_merges'
+                        , type=int
+                        , help='The minimum number of merges to have.\n')
     parser.add_argument('max_size'
                         , type=int
                         , help='The maximum allowed repository size in KB.\n')
