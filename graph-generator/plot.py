@@ -12,7 +12,8 @@ metrics = ["blocker_violations", "bugs", "code_smells", "cognitive_complexity", 
 
 graphs_folder = "../graphs"
 
-json_path = "../sample.json"
+x_merge_values = []
+y_quality_metrics = dict()
 
 
 def create_folder(path):
@@ -24,13 +25,8 @@ def get_filename(item):
     return item.split("/")[len(item.split("/")) - 1]
 
 
-def generate_all_graphs(project_name, project_json):
-    x_merge_values = []
-    y_quality_metrics = dict()
-
-    for metric in metrics:
-        y_quality_metrics[metric] = []
-
+def process_all_metrics(project_name, project_json):
+    print("Processing data for project " + project_name + "...")
     for file_json in project_json:
         if file_json["quality"] == {}:
             print("Found no data, skipping file " + get_filename(file_json["file"]) + " in project " + project_name)
@@ -52,16 +48,11 @@ def generate_all_graphs(project_name, project_json):
         print("--> One or Zero points to plot for " + project_name + ", no graphs will be generated!")
         return
 
-    print("Generating graphs for project " + project_name + "...")
-    create_folder(graphs_folder + "/" + project_name)
 
-    for metric in metrics:
-        generate_graph(x_merge_values, y_quality_metrics[metric], project_name, metric)
-
-
-def generate_graph(x, y, project_name, metric_name):
-    if (len(x) != len(y)):
-        print("Cannot plot " + metric_name + " of project " + project_name + " : mismatch between merges and metric data")
+def generate_graph(x, y, metric_name):
+    if len(x) != len(y):
+        print(
+            "Cannot plot " + metric_name + " : mismatch between merges and metric data")
         return
     trace = go.Scatter(x=x, y=y, mode='markers')
     slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
@@ -76,7 +67,7 @@ def generate_graph(x, y, project_name, metric_name):
         name='Fit'
     )
     data = [trace, trace2]
-    py.offline.plot(data, filename=graphs_folder + "/" + project_name + "/" + metric_name + ".html", auto_open=False)
+    py.offline.plot(data, filename=graphs_folder + "/" + metric_name + ".html", auto_open=False)
 
 
 def main(argv):
@@ -85,11 +76,19 @@ def main(argv):
         return
     json_path = argv[1]
 
+    for metric in metrics:
+        y_quality_metrics[metric] = []
+
     create_folder(graphs_folder)
     with(open(json_path)) as file:
         json_object = json.load(file)
         for project in json_object:
-            generate_all_graphs(project, json_object[project])
+            process_all_metrics(project, json_object[project])
+
+    for m in metrics:
+        generate_graph(x_merge_values, y_quality_metrics[m], m)
+
+    print(len(x_merge_values))
 
 
 if __name__ == "__main__":
