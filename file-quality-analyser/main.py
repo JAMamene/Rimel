@@ -1,6 +1,7 @@
 import argparse
 import os
 import time
+import json
 
 import sonar_utils
 
@@ -39,4 +40,4 @@ if __name__ == '__main__':
             sonar_utils.build_sonar_request(args.project_key, args.file_path)
         )
         time.sleep(1)
-    print(res)
+    print(json.dumps(res))

@@ -3,6 +3,7 @@ import os
 import subprocess
 import time
 import urllib.request
+from urllib.error import URLError
 
 METRICS = ["blocker_violations", "bugs", "code_smells", "cognitive_complexity", "comment_lines", "class_complexity",
            "function_complexity", "confirmed_issues", "critical_violations", "complexity",
@@ -35,7 +36,10 @@ def build_sonar_request(project, file_name):
 
 
 def exec_request(request):
-    return json.loads(urllib.request.urlopen(request).read().decode())
+    try :
+        return json.loads(urllib.request.urlopen(request).read().decode())
+    except URLError as e:
+        return dict()
 
 
 def check_key_exists(key):
