@@ -35,7 +35,7 @@ def build_sonar_request(project, file_name):
 
 
 def exec_request(request):
-    return json.loads(urllib.request.urlopen(request).read().decode())
+    return json.loads(urllib.request.urlopen(request).read().decode()))
 
 
 def check_key_exists(key):

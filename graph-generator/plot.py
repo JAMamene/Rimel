@@ -54,7 +54,15 @@ def generate_graph(x, y, metric_name):
         print(
             "Cannot plot " + metric_name + " : mismatch between merges and metric data")
         return
-    trace = go.Scatter(x=x, y=y, mode='markers')
+    if metric_name is "lines":
+        metric_name_clean: str = metric_name.replace("_", " ").capitalize()
+    else:
+        metric_name_clean: str = metric_name.replace("_", " ").capitalize() + " weighted by number of line"
+    trace = go.Scatter(
+        x=x,
+        y=y,
+        mode='markers',
+        name=metric_name_clean)
     slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
     line = []
     for i in x:
@@ -63,11 +71,17 @@ def generate_graph(x, y, metric_name):
         x=x,
         y=line,
         mode='lines',
-        marker=go.scatter.Marker(color='rgb(31, 119, 180)'),
-        name='Fit'
+        marker=go.scatter.Marker(color='rgb(237, 14, 69)'),
+        name='Trend'
     )
     data = [trace, trace2]
-    py.offline.plot(data, filename=graphs_folder + "/" + metric_name + ".html", auto_open=False)
+    layout = dict(title="{} according to the number of merges per file".format(metric_name_clean),
+                  xaxis={'title':
+                             dict(text='Merges')},
+                  yaxis={'title':
+                             dict(text=metric_name_clean)})
+    figure = go.Figure(data=data, layout=layout)
+    py.offline.plot(figure, filename=graphs_folder + "/" + metric_name + ".html", auto_open=False)
 
 
 def main(argv):

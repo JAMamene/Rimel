@@ -1,6 +1,8 @@
 import argparse
 import os
 import time
+import json
+from urllib.error import URLError
 
 import sonar_utils
 
@@ -35,8 +37,12 @@ if __name__ == '__main__':
         )
     res: dict = {}
     while not res.get("component", dict()).get("measures"):
-        res = sonar_utils.exec_request(
-            sonar_utils.build_sonar_request(args.project_key, args.file_path)
-        )
+        try :
+            res = sonar_utils.exec_request(
+                sonar_utils.build_sonar_request(args.project_key, args.file_path)
+            )
+        except URLError as e:
+            print(json.dumps(dict()))
+            return None
         time.sleep(1)
-    print(res)
+    print(json.dumps(res))
