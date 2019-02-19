@@ -76,10 +76,8 @@ def generate_graph(x, y, metric_name):
     )
     data = [trace, trace2]
     layout = dict(title="{} according to the number of merges per file".format(metric_name_clean),
-                  xaxis={'title':
-                             dict(text='Merges')},
-                  yaxis={'title':
-                             dict(text=metric_name_clean)})
+                  xaxis={'title': dict(text='Merges')},
+                  yaxis={'title': dict(text=metric_name_clean)})
     figure = go.Figure(data=data, layout=layout)
     py.offline.plot(figure, filename=graphs_folder + "/" + metric_name + ".html", auto_open=False)
 
