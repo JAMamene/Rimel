@@ -1,7 +1,7 @@
 # Graph generator
 
 ## Prerequisites
-* Python with the following packages: `plotly`,`scipy`
+* Python with the following packages: `plotly`,`scipy`, `numpy`
 
 ## Running
 Pass the json result of the quality-analyser script as argument. The script will generate the graphs and 
