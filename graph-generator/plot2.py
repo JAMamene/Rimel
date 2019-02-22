@@ -93,7 +93,12 @@ def generate_histogram():
         else:
             val = (avg_after - avg_before) / avg_before * 100
             print("Average relative difference for " + metrics[i] + " after a merge: " + str(val) + "%")
-            relative.append(val)
+            if val == 0:
+                print(
+                    "Value for " + metrics[i] + " is 0 and will be replaced with 0.00001 to avoid a graph color issue")
+                relative.append(0.00001)
+            else:
+                relative.append(val)
         metrics[i] = metrics[i].replace("_", " ").capitalize()
     colors = []
     for i in range(0, len(relative)):
