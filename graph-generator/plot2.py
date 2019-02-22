@@ -39,10 +39,13 @@ def process_all_metrics(project_name, project_json):
         for conflict_json in all_conflicts_json:
             if not conflict_json["before"] or not conflict_json["after"]:
                 continue
+            print("\tProcessing file: " + conflict_json["before"]["component"]["name"])
             for i in range(0, len(metrics)):
                 metric = metrics[i]
                 before = find_value(conflict_json["before"]["component"]["measures"], metric)
                 after = find_value(conflict_json["after"]["component"]["measures"], metric)
+                if before is None or after is None:
+                    continue
                 all_values[i].append(float(after) - float(before))
                 all_before[i].append(float(before))
                 all_after[i].append(float(after))
@@ -52,7 +55,7 @@ def find_value(metric_array, metric):
     for metric_object in metric_array:
         if metric_object["metric"] == metric:
             return metric_object["value"]
-    print("Could not find value for " + metric)
+    print("\t\tCould not find value for " + metric)
 
 
 def generate_box_plots():
