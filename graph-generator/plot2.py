@@ -34,12 +34,16 @@ def get_filename(item):
 
 def process_all_metrics(project_name, project_json):
     print("Processing data for project " + project_name + "...")
+    conflict_count = 0
+    file_count = 0
     for filename in project_json:
         all_conflicts_json = project_json[filename]
+        file_count += 1
         for conflict_json in all_conflicts_json:
             if not conflict_json["before"] or not conflict_json["after"]:
                 continue
-            print("\tProcessing file: " + conflict_json["before"]["component"]["name"])
+            conflict_count += 1
+            print("\tProcessing conflict in: " + conflict_json["before"]["component"]["name"])
             for i in range(0, len(metrics)):
                 metric = metrics[i]
                 before = find_value(conflict_json["before"]["component"]["measures"], metric)
@@ -49,6 +53,7 @@ def process_all_metrics(project_name, project_json):
                 all_values[i].append(float(after) - float(before))
                 all_before[i].append(float(before))
                 all_after[i].append(float(after))
+    return conflict_count, file_count
 
 
 def find_value(metric_array, metric):
@@ -126,14 +131,25 @@ def main(argv):
         all_before.append([])
         all_after.append([])
 
+    project_count = 0
+    file_count = 0
+    conflict_count = 0
     create_folder(graphs_folder)
     with(open(json_path)) as file:
         json_object = json.load(file)
         for project in json_object:
-            process_all_metrics(project, json_object[project])
+            project_count += 1
+            counts = process_all_metrics(project, json_object[project])
+            conflict_count += counts[0]
+            file_count += counts[1]
 
+    print("----------------------------------------------")
     generate_box_plots()
     generate_histogram()
+    print("----------------------------------------------")
+    print("Analyzed " + str(project_count) + " projects containing " + str(
+        conflict_count) + " merge conflicts across " + str(
+        file_count) + " files")
 
 
 if __name__ == "__main__":
