@@ -7,12 +7,12 @@ import plotly as py
 import plotly.graph_objs as go
 
 metrics = ["blocker_violations", "bugs", "code_smells", "cognitive_complexity", "comment_lines", "class_complexity",
-           "function_complexity", "confirmed_issues", "critical_violations", "complexity",
+           "critical_violations", "complexity",
            "duplicated_blocks", "info_violations", "violations", "lines", "major_violations", "minor_violations"]
 
-complexity_metrics = ["class_complexity", "function_complexity", "complexity"]
+complexity_metrics = ["class_complexity", "complexity"]
 lines_metric = ["lines", "comment_lines"]
-other_metrics = ["blocker_violations", "bugs", "code_smells", "confirmed_issues", "critical_violations",
+other_metrics = ["blocker_violations", "bugs", "code_smells", "critical_violations",
                  "duplicated_blocks", "info_violations", "violations", "major_violations", "minor_violations"]
 
 graphs_folder = "../graphs"
