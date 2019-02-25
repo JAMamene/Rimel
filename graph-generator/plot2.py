@@ -10,8 +10,7 @@ metrics = ["blocker_violations", "bugs", "code_smells", "cognitive_complexity", 
            "critical_violations", "complexity",
            "duplicated_blocks", "info_violations", "violations", "lines", "major_violations", "minor_violations"]
 
-inverted_colors = ["Comment lines"]
-neutral_colors = ["Lines"]
+neutral_colors = ["Lines", "Comment lines"]
 
 complexity_metrics = ["class_complexity", "complexity"]
 lines_metric = ["lines", "comment_lines"]
@@ -85,6 +84,7 @@ def generate_single_plot(selected):
         data.append(go.Box(
             name=metric.replace("_", " ").capitalize(),
             y=all_values[metrics.index(metric)],
+            boxpoints='all'
         ))
     return data
 
@@ -111,17 +111,11 @@ def generate_histogram():
     colors = []
     for i in range(0, len(relative)):
         if metrics[i] in neutral_colors:
-            colors.append("rgb(51, 153, 255)")
+            colors.append("rgb(128,128,128)")
         elif relative[i] > 0:
-            if metrics[i] in inverted_colors:
-                colors.append("rgb(15,155,15)")
-            else:
-                colors.append("rgb(155,15,15)")
+            colors.append("rgb(155,15,15)")
         else:
-            if metrics[i] in inverted_colors:
-                colors.append("rgb(155,15,15)")
-            else:
-                colors.append("rgb(15,155,15)")
+            colors.append("rgb(15,155,15)")
     trace = go.Histogram(x=metrics, y=relative, histfunc="sum", marker=dict(color=colors))
     layout = dict(title="Average metric variation before and after a merge conflict",
                   xaxis={'title': dict(text='Metric')},
