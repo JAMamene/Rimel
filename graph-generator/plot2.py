@@ -137,7 +137,12 @@ def main(argv):
     create_folder(graphs_folder)
     with(open(json_path)) as file:
         json_object = json.load(file)
+        already_analyzed = []
         for project in json_object:
+            if project in already_analyzed:
+                print("Project " + project + " was already analyzed, skipping...")
+                continue
+            already_analyzed.append(project)
             project_count += 1
             counts = process_all_metrics(project, json_object[project])
             conflict_count += counts[0]
