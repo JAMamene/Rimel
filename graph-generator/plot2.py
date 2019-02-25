@@ -10,6 +10,9 @@ metrics = ["blocker_violations", "bugs", "code_smells", "cognitive_complexity", 
            "critical_violations", "complexity",
            "duplicated_blocks", "info_violations", "violations", "lines", "major_violations", "minor_violations"]
 
+inverted_colors = ["Comment lines"]
+neutral_colors = ["Lines"]
+
 complexity_metrics = ["class_complexity", "complexity"]
 lines_metric = ["lines", "comment_lines"]
 other_metrics = ["blocker_violations", "bugs", "code_smells", "critical_violations",
@@ -107,10 +110,18 @@ def generate_histogram():
         metrics[i] = metrics[i].replace("_", " ").capitalize()
     colors = []
     for i in range(0, len(relative)):
-        if relative[i] > 0:
-            colors.append("rgb(155,15,15)")
+        if metrics[i] in neutral_colors:
+            colors.append("rgb(51, 153, 255)")
+        elif relative[i] > 0:
+            if metrics[i] in inverted_colors:
+                colors.append("rgb(15,155,15)")
+            else:
+                colors.append("rgb(155,15,15)")
         else:
-            colors.append("rgb(15,155,15)")
+            if metrics[i] in inverted_colors:
+                colors.append("rgb(155,15,15)")
+            else:
+                colors.append("rgb(15,155,15)")
     trace = go.Histogram(x=metrics, y=relative, histfunc="sum", marker=dict(color=colors))
     layout = dict(title="Average metric variation before and after a merge conflict",
                   xaxis={'title': dict(text='Metric')},
